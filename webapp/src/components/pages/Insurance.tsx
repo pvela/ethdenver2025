@@ -3,11 +3,12 @@ import { Drug } from '../types/Drug';
 import { searchDrugs } from '../services/drugApi';
 import debounce from 'lodash/debounce';
 
-export default function Home() {
+export default function Insurance() {
   const [searchQuery, setSearchQuery] = useState('');
   const [drugs, setDrugs] = useState<Drug[]>([]);
   const [loading, setLoading] = useState(false);
   const [selectedDrug, setSelectedDrug] = useState<Drug | null>(null);
+  const [selectedDrugList, setSelectedDrugList] = useState<Drug[]>([]);
 
   const debouncedSearch = useCallback(
     debounce(async (query: string) => {
@@ -118,16 +119,46 @@ export default function Home() {
                   className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors"
                   onClick={() => {
                     // Handle drug selection
-                    alert(`Selected drug: ${selectedDrug.drugName}`);
+                    // alert(`Selected drug: ${selectedDrug.drugName}`);
+                    // setSelectedDrugList(selectedDrug);
+                    setSelectedDrugList(oldArray => [...oldArray,selectedDrug] );
                   }}
                 >
                   Choose Drug
                 </button>
               </div>
+              
             ) : (
               <p className="text-gray-600">Select a drug to view details</p>
             )}
           </div>
+          <div className="bg-white rounded-lg shadow p-6">
+            <h2 className="text-xl font-semibold mb-4">Selected List</h2>
+            <div className="space-y-4">
+              {selectedDrugList.map((drug) => (
+                <div
+                  key={drug.productNdc}
+                  className="p-4 border rounded-lg hover:bg-gray-50 cursor-pointer"
+                  // onClick={() => handleDrugSelect(drug)}
+                >
+                  <h3 className="font-medium text-lg">{drug.drugName}</h3>
+                  <p className="text-sm text-gray-600">
+                    Manufacturer: {drug.manufacturerName}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+          
+          {/* <div >
+          <h2 className="text-xl font-semibold mb-4">Selected List</h2>
+          <ul className="list-disc pl-5">
+                    {selectedDrugList.map((drug, index) => (
+                      <li key={index}>{drug.drugName}</li>
+                    ))}
+                  </ul>
+ 
+          </div> */}
         </div>
       </div>
     </div>

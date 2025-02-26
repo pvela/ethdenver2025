@@ -10,8 +10,17 @@ function App() {
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             Our supercool team!!
           </Typography>
-          <Button color="inherit" component={RouterLink} to="/">
-            Home
+          {/* <Button color="inherit" component={RouterLink} to="/">
+            Drug List
+          </Button> */}
+          <Button color="inherit" component={RouterLink} to="/manufacturer">
+            Manufacturer
+          </Button>
+          <Button color="inherit" component={RouterLink} to="/insurance">
+            Insurance
+          </Button>
+          <Button color="inherit" component={RouterLink} to="/doctor">
+            Doctor
           </Button>
           <Button color="inherit" component={RouterLink} to="/about">
             About
