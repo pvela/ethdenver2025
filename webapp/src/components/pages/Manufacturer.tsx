@@ -95,6 +95,7 @@ export default function Manufacturer() {
   // };
 
   const handleDrugSelect = (drug: Drug) => {
+    setShowGrid(false);
     if ( storedData && storedData?.length > 0 ) {
       const histData = storedData.filter( ( hist ) =>  {
        return hist.drugName === drug.drugName
@@ -104,7 +105,7 @@ export default function Manufacturer() {
 
       // alert(JSON.stringify(histData));
       // alert(JSON.stringify(manHistData));
-      
+
     }
   
     setSelectedDrug(drug);
