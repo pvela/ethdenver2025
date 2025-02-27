@@ -13,7 +13,7 @@ export default function Manufacturer() {
   // const [selectedDrugList, setSelectedDrugList] = useState<Drug[]>([]);
   const [pickedDrug, setPickedDrug] = useState<Drug | null>(null);
   const [error, setError] = useState('')
-  const [manHistData, setManHistData] = useState([{}]);
+  const [manHistData, setManHistData] = useState<PriceEntry[]>([]);
 
   interface PriceEntry {
     price: number;
@@ -40,11 +40,11 @@ export default function Manufacturer() {
 
   const [showGrid, setShowGrid] = useState(false);
 
-  const manHistData2 = [
-    { price: 99.99, date: '2024-02-26' },
-    { price: 149.99, date: '2024-02-25' },
-    { price: 199.99, date: '2024-02-24' },
-  ];
+  // const manHistData2 = [
+  //   { price: 99.99, date: '2024-02-26' },
+  //   { price: 149.99, date: '2024-02-25' },
+  //   { price: 199.99, date: '2024-02-24' },
+  // ];
 
 
   const handleNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -96,12 +96,14 @@ export default function Manufacturer() {
 
   const handleDrugSelect = (drug: Drug) => {
     setShowGrid(false);
-    if ( storedData && storedData?.length > 0 ) {
+    if ( storedData && storedData.length > 0 ) {
       const histData = storedData.filter( ( hist ) =>  {
        return hist.drugName === drug.drugName
-
       });
-      setManHistData(histData[0].history);
+      if (histData[0].history.length > 0 ) {
+        setManHistData(histData[0].history);
+      }
+      // alert(JSON.stringify(storedData));
 
       // alert(JSON.stringify(histData));
       // alert(JSON.stringify(manHistData));
@@ -184,6 +186,10 @@ export default function Manufacturer() {
                   <p>{selectedDrug.manufacturerName}</p>
                 </div>
                 <div>
+                  <p className="font-medium">Current Price:</p>
+                  <p>{manHistData[2].price}</p>
+                </div>
+                <div>
                   <p className="font-medium">Selling Price:</p>
                   <div className="mb-8">
                     <input
@@ -221,6 +227,8 @@ export default function Manufacturer() {
                     // Handle drug selection
                     // alert(`Selected drug: ${selectedDrug.drugName}`);
                     setPickedDrug(selectedDrug);
+
+                    //TODO : add this to the local storage... 
                     // localStorage.setItem('userData', JSON.stringify(formData));
 
                     // setSelectedDrugList(oldArray => [...oldArray,selectedDrug] );

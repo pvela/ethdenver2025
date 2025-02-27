@@ -27,7 +27,7 @@ const Grid: React.FC<GridProps> = ({ items }) => {
           {items.map((item, index) => (
             <tr key={index}>
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                ${item.price.toFixed(2)}
+                ${item.price}
               </td>
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                 {new Date(item.date).toLocaleDateString()}

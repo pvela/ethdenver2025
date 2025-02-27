@@ -23,27 +23,26 @@ export const searchDrugs = async (query: string): Promise<SearchResponse> => {
       strength: result.active_ingredients?.[0]?.strength || 'Not specified',
       manufacturerName: result.labeler_name,
       pricing: {
-        price: Math.random() * 100 + 10, // Simulated price since FDA API doesn't provide pricing
+        price: (Math.random() * 100 + 10).toFixed(0), // Simulated price since FDA API doesn't provide pricing
         lastUpdated: new Date().toISOString(),
       },
       productNdc: result.product_ndc,
     }
 ));
 
-results.map(( res: Drug ) => {
-    
+results.map(( res: Drug, index ) => {
+    const rPrice = res.pricing.price;
     const manHist = {
         drugName: res.drugName,
         history: [
-         { price : res.pricing.price, date : '2024-01-01'},
-         { price : res.pricing.price + 10, date : '2024-04-01'},
-         { price : res.pricing.price + 13, date : '2024-05-01'},
-         { price : res.pricing.price + 15, date : '2024-09-01'},
+         { price : (Math.random() * 100 + 10).toFixed(0), date : '2024-05-01'},
+         { price : (Math.random() * 100 + 10).toFixed(0), date : '2024-09-01'},
+         { price : (Math.random() * 100 + 10).toFixed(0), date : '2025-01-10'},
         ]
      }
      manHistArray.push(manHist);
- 
-});
+    });
+
     localStorage.setItem('manHistData', JSON.stringify(manHistArray));
 
     return {
