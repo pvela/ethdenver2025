@@ -8,8 +8,14 @@ export const searchDrugs = async (query: string): Promise<SearchResponse> => {
       `${FDA_API_BASE_URL}?search=brand_name:"${query}"&limit=10`
     );
     const data = await response.json();
+
+    const manHistArray = [{}];
+    
+    localStorage.removeItem('manHistData');
+
     
     const results: Drug[] = data.results.map((result: any) => ({
+
       drugName: result.brand_name,
       activeIngredients: result.active_ingredients?.map((ingredient: any) => ingredient.name) || [],
       dosageForm: result.dosage_form,
@@ -21,7 +27,24 @@ export const searchDrugs = async (query: string): Promise<SearchResponse> => {
         lastUpdated: new Date().toISOString(),
       },
       productNdc: result.product_ndc,
-    }));
+    }
+));
+
+results.map(( res: Drug ) => {
+    
+    const manHist = {
+        drugName: res.drugName,
+        history: [
+         { price : res.pricing.price, date : '2024-01-01'},
+         { price : res.pricing.price + 10, date : '2024-04-01'},
+         { price : res.pricing.price + 13, date : '2024-05-01'},
+         { price : res.pricing.price + 15, date : '2024-09-01'},
+        ]
+     }
+     manHistArray.push(manHist);
+ 
+});
+    localStorage.setItem('manHistData', JSON.stringify(manHistArray));
 
     return {
       results,

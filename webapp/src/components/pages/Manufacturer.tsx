@@ -1,7 +1,8 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { Drug } from '../types/Drug';
 import { searchDrugs } from '../services/drugApi';
 import debounce from 'lodash/debounce';
+import Grid from './Grid';
 
 export default function Manufacturer() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -11,6 +12,57 @@ export default function Manufacturer() {
   const [selectedDrug, setSelectedDrug] = useState<Drug | null>(null);
   // const [selectedDrugList, setSelectedDrugList] = useState<Drug[]>([]);
   const [pickedDrug, setPickedDrug] = useState<Drug | null>(null);
+  const [error, setError] = useState('')
+  const [manHistData, setManHistData] = useState([{}]);
+
+  interface PriceEntry {
+    price: number;
+    date: string;
+  }
+  
+  interface StorageData {
+    drugName: string;
+    history: PriceEntry[];
+  }
+
+  const [storedData, setStoredData] = useState<StorageData[]>();
+
+
+  useEffect(() => {
+    // Load data from localStorage when component mounts
+    const savedData = localStorage.getItem('manHistData');
+    if (savedData) {
+      setStoredData(JSON.parse(savedData));
+    }
+  }, []);
+
+
+
+  const [showGrid, setShowGrid] = useState(false);
+
+  const manHistData2 = [
+    { price: 99.99, date: '2024-02-26' },
+    { price: 149.99, date: '2024-02-25' },
+    { price: 199.99, date: '2024-02-24' },
+  ];
+
+
+  const handleNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value
+    setSellingPrice(value)
+    
+    if (value === '') {
+      setError('')
+      return
+    }
+
+    const num = Number(value)
+    if (isNaN(num)) {
+      setError('Please enter a valid number')
+    } else {
+      setError('')
+    }
+  }
 
   const debouncedSearch = useCallback(
     debounce(async (query: string) => {
@@ -36,13 +88,25 @@ export default function Manufacturer() {
     setSearchQuery(query);
     debouncedSearch(query);
   };
-  const handleSellingPriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const query = e.target.value;
-    setSellingPrice(query);
-    // debouncedSearch(query);
-  };
+
+  // const handleSellingPriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   const query = e.target.value;
+  //   setSellingPrice(query);
+  // };
 
   const handleDrugSelect = (drug: Drug) => {
+    if ( storedData && storedData?.length > 0 ) {
+      const histData = storedData.filter( ( hist ) =>  {
+       return hist.drugName === drug.drugName
+
+      });
+      setManHistData(histData[0].history);
+
+      // alert(JSON.stringify(histData));
+      // alert(JSON.stringify(manHistData));
+      
+    }
+  
     setSelectedDrug(drug);
   };
 
@@ -123,11 +187,26 @@ export default function Manufacturer() {
                   <div className="mb-8">
                     <input
                       type="text"
-                      placeholder="Selling price..."
+                      placeholder="Price..."
                       value={sellingPrice}
-                      onChange={handleSellingPriceChange}
-                      className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      // onChange={handleSellingPriceChange}
+                      onChange={handleNumberChange}
+                      className="w-20 px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     />
+                    {error && (
+                      <p className="text-red-500 text-sm">{error}</p>
+                    )}
+
+                  </div>
+                  <div className="max-w-4xl mx-auto">
+                    <button
+                      onClick={() => setShowGrid(!showGrid)}
+                      className="mb-6 bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors duration-200"
+                    >
+                      {showGrid ? 'Hide' : 'History'}
+                    </button>
+
+                    {showGrid && <Grid items={manHistData} />}
                   </div>
 
                   {/* <p>${selectedDrug.pricing.price.toFixed(2)}</p>
@@ -136,11 +215,13 @@ export default function Manufacturer() {
                   </p> */}
                 </div>
                 <button
-                  className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors"
+                  className="w-full bg-blue-700 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors"
                   onClick={() => {
                     // Handle drug selection
                     // alert(`Selected drug: ${selectedDrug.drugName}`);
                     setPickedDrug(selectedDrug);
+                    // localStorage.setItem('userData', JSON.stringify(formData));
+
                     // setSelectedDrugList(oldArray => [...oldArray,selectedDrug] );
                   }}
                 >
