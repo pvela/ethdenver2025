@@ -14,6 +14,7 @@ export default function Manufacturer() {
   const [pickedDrug, setPickedDrug] = useState<Drug | null>(null);
   const [error, setError] = useState('')
   const [manHistData, setManHistData] = useState<PriceEntry[]>([]);
+  const [approvalRequired, setApprovalRequired] = useState(false);
 
   interface PriceEntry {
     price: number;
@@ -29,6 +30,7 @@ export default function Manufacturer() {
 
 
   useEffect(() => {
+    localStorage.removeItem('MfrDrugData');
     // Load data from localStorage when component mounts
     const savedData = localStorage.getItem('manHistData');
     if (savedData) {
@@ -226,11 +228,20 @@ export default function Manufacturer() {
                   onClick={() => {
                     // Handle drug selection
                     // alert(`Selected drug: ${selectedDrug.drugName}`);
-                    setPickedDrug(selectedDrug);
-
-                    //TODO : add this to the local storage... 
-                    // localStorage.setItem('userData', JSON.stringify(formData));
-
+                    let drug = selectedDrug;
+                    if ( sellingPrice != '' ) {
+                      drug.pricing.price = Number(sellingPrice);
+                      drug.pricing.lastUpdated = new Date().toISOString();
+                      setApprovalRequired(true);
+                      // alert(JSON.stringify(drug));
+                      localStorage.setItem('MfrDrugData', JSON.stringify(drug));
+                      } else {
+                      drug.pricing.price = manHistData[2].price;
+                      drug.pricing.lastUpdated = manHistData[2].date;
+                      setApprovalRequired(false);
+                    }
+                    setSelectedDrug(drug)
+                    setPickedDrug(drug);
                     // setSelectedDrugList(oldArray => [...oldArray,selectedDrug] );
                   }}
                 >
@@ -252,7 +263,10 @@ export default function Manufacturer() {
                 >
                   <h3 className="font-medium text-lg">{pickedDrug?.drugName}</h3>
                   <p className="text-sm text-gray-600">
-                    Manufacturer: {pickedDrug?.manufacturerName}
+                    <ul>Manufacturer: {pickedDrug?.manufacturerName}</ul>
+                    <ul>Price : {pickedDrug?.pricing.price}</ul>
+                    <ul>Price Updated Date : {pickedDrug?.pricing.lastUpdated}</ul>
+                    <ul>Approval Required: {approvalRequired?'Yes':'No'}</ul>
                   </p>
                 </div>
             </div>
