@@ -10,6 +10,7 @@ export interface Drug {
       lastUpdated: string;
     };
     productNdc: string;
+    approvalRequired: boolean;
   }
   
   export interface SearchResponse {

@@ -198,7 +198,6 @@ export default function Manufacturer() {
                       type="text"
                       placeholder="Price..."
                       value={sellingPrice}
-                      // onChange={handleSellingPriceChange}
                       onChange={handleNumberChange}
                       className="w-20 px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     />
@@ -229,17 +228,18 @@ export default function Manufacturer() {
                     // Handle drug selection
                     // alert(`Selected drug: ${selectedDrug.drugName}`);
                     let drug = selectedDrug;
-                    if ( sellingPrice != '' ) {
+                    if ( sellingPrice != '' && ! isNaN(Number(sellingPrice)) ) {
                       drug.pricing.price = Number(sellingPrice);
                       drug.pricing.lastUpdated = new Date().toLocaleDateString();
                       setApprovalRequired(true);
                       // alert(JSON.stringify(drug));
-                      localStorage.setItem('MfrDrugData', JSON.stringify(drug));
+                      // localStorage.setItem('MfrDrugData', JSON.stringify(drug));
                       } else {
                       drug.pricing.price = manHistData[2].price;
                       drug.pricing.lastUpdated = manHistData[2].date;
                       setApprovalRequired(false);
                     }
+                    localStorage.setItem('MfrDrugData', JSON.stringify(drug));
                     setSelectedDrug(drug)
                     setPickedDrug(drug);
                     // setSelectedDrugList(oldArray => [...oldArray,selectedDrug] );
