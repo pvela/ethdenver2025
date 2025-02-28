@@ -228,7 +228,7 @@ export default function Manufacturer() {
                     // Handle drug selection
                     // alert(`Selected drug: ${selectedDrug.drugName}`);
                     let drug = selectedDrug;
-                    if ( sellingPrice != '' && ! isNaN(Number(sellingPrice)) ) {
+                    if ( sellingPrice != '' && !isNaN(Number(sellingPrice)) ) {
                       drug.pricing.price = Number(sellingPrice);
                       drug.pricing.lastUpdated = new Date().toLocaleDateString();
                       setApprovalRequired(true);
