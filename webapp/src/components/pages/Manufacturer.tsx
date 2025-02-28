@@ -253,7 +253,8 @@ export default function Manufacturer() {
               <p className="text-gray-600">Select a drug to view details</p>
             )}
           </div>
-          <div className="bg-white rounded-lg shadow p-6">
+          {pickedDrug?.drugName && pickedDrug?.drugName.length > 0 && (
+            <div className="bg-white rounded-lg shadow p-6">
             <h2 className="text-xl font-semibold mb-4">Picked Drug</h2>
             <div className="space-y-4">
                 <div
@@ -271,6 +272,7 @@ export default function Manufacturer() {
                 </div>
             </div>
           </div>
+        )}
           
           {/* <div >
           <h2 className="text-xl font-semibold mb-4">Selected List</h2>
