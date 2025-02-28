@@ -22,7 +22,7 @@ function AppContent() {
       <AppBar style={{backgroundColor:'blue', color: 'white'}} position="static">
         <Toolbar>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            Our supercool team!!
+            Supercool team!!
           </Typography>
           {/* <Button color="inherit" component={RouterLink} to="/">
             Drug List
@@ -32,9 +32,6 @@ function AppContent() {
           </Button>
           <Button color="inherit" component={RouterLink} to="/insurance">
             Insurance
-          </Button>
-          <Button color="inherit" component={RouterLink} to="/doctor">
-            Doctor
           </Button>
           <Button color="inherit" component={RouterLink} to="/about">
             About

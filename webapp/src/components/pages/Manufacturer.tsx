@@ -139,7 +139,29 @@ export default function Manufacturer() {
           <div className="text-center text-gray-600">Loading...</div>
         )}
 
-        <div className="grid gap-6 md:grid-cols-2">
+        {pickedDrug?.drugName && pickedDrug?.drugName.length > 0 && (
+            <div className="bg-white rounded-lg shadow p-6">
+            <h2 className="text-xl font-semibold mb-4">Picked Drug</h2>
+            <div className="space-y-4">
+                <div
+                  key={pickedDrug?.productNdc}
+                  className="p-4 border rounded-lg hover:bg-gray-50 cursor-pointer"
+                  // onClick={() => handleDrugSelect(drug)}
+                >
+                  <h3 className="font-medium text-lg">{pickedDrug?.drugName}</h3>
+                  <p className="text-sm text-gray-600">
+                    <ul>Manufacturer: {pickedDrug?.manufacturerName}</ul>
+                    <ul>Price : {pickedDrug?.pricing.price}</ul>
+                    <ul>Price Updated Date : {pickedDrug?.pricing.lastUpdated}</ul>
+                    <ul>Ins Approval Required: {approvalRequired?'Yes':'No'}</ul>
+                  </p>
+                </div>
+            </div>
+          </div>
+        )}
+
+
+        <div className="mt-5 grid gap-6 md:grid-cols-2">
           <div className="bg-white rounded-lg shadow p-6">
             <h2 className="text-xl font-semibold mb-4">Search Results</h2>
             <div className="space-y-4">
@@ -253,7 +275,7 @@ export default function Manufacturer() {
               <p className="text-gray-600">Select a drug to view details</p>
             )}
           </div>
-          {pickedDrug?.drugName && pickedDrug?.drugName.length > 0 && (
+          {/* {pickedDrug?.drugName && pickedDrug?.drugName.length > 0 && (
             <div className="bg-white rounded-lg shadow p-6">
             <h2 className="text-xl font-semibold mb-4">Picked Drug</h2>
             <div className="space-y-4">
@@ -272,7 +294,7 @@ export default function Manufacturer() {
                 </div>
             </div>
           </div>
-        )}
+        )} */}
           
           {/* <div >
           <h2 className="text-xl font-semibold mb-4">Selected List</h2>
