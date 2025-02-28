@@ -231,7 +231,7 @@ export default function Manufacturer() {
                     let drug = selectedDrug;
                     if ( sellingPrice != '' ) {
                       drug.pricing.price = Number(sellingPrice);
-                      drug.pricing.lastUpdated = new Date().toISOString();
+                      drug.pricing.lastUpdated = new Date().toLocaleDateString();
                       setApprovalRequired(true);
                       // alert(JSON.stringify(drug));
                       localStorage.setItem('MfrDrugData', JSON.stringify(drug));
@@ -266,7 +266,7 @@ export default function Manufacturer() {
                     <ul>Manufacturer: {pickedDrug?.manufacturerName}</ul>
                     <ul>Price : {pickedDrug?.pricing.price}</ul>
                     <ul>Price Updated Date : {pickedDrug?.pricing.lastUpdated}</ul>
-                    <ul>Approval Required: {approvalRequired?'Yes':'No'}</ul>
+                    <ul>Ins Approval Required: {approvalRequired?'Yes':'No'}</ul>
                   </p>
                 </div>
             </div>
