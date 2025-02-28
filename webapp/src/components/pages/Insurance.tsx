@@ -276,7 +276,7 @@ export default function Insurance() {
                     <ul>Manufacturer: {pickedDrug?.manufacturerName}</ul>
                     <ul>Price : {pickedDrug?.pricing.price}</ul>
                     <ul>Price Updated Date : {pickedDrug?.pricing.lastUpdated}</ul>
-                    <ul>Ins Approval Required: {approvalRequired?'Yes':'No'}</ul>
+                    <ul>Mfr Approval Required: {approvalRequired?'Yes':'No'}</ul>
                   </p>
                 </div>
             </div>
