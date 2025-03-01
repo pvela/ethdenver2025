@@ -98,8 +98,29 @@ export default function Manufacturer() {
 }, []);
 
 const handleSetPrice = async () => {
-  setProductName("1231232")
+  setProductName(drugs[2].productNdc)
   // setProductPrice("125000")
+
+                      // Handle drug selection
+                    // alert(`Selected drug: ${selectedDrug.drugName}`);
+                    let drug = drugs[2];
+                    if ( sellingPrice != '' && !isNaN(Number(sellingPrice)) ) {
+                      drug.pricing.price = Number(sellingPrice);
+                      drug.pricing.lastUpdated = new Date().toLocaleDateString();
+                      setApprovalRequired(true);
+                      // alert(JSON.stringify(drug));
+                      // localStorage.setItem('MfrDrugData', JSON.stringify(drug));
+                      } else {
+                      drug.pricing.price = manHistData[2].price;
+                      drug.pricing.lastUpdated = manHistData[2].date;
+                      setApprovalRequired(false);
+                    }
+                    localStorage.setItem('MfrDrugData', JSON.stringify(drug));
+                    setSelectedDrug(drug)
+                    setPickedDrug(drug);
+                    
+                    // setSelectedDrugList(oldArray => [...oldArray,selectedDrug] );
+
     if (!contract) return;
     try {
         const tx = await contract.setProductPrice(
@@ -263,6 +284,7 @@ const handleSetPrice = async () => {
             {selectedDrug ? (
               <div className="space-y-4">
                 <h3 className="text-xl font-medium">{selectedDrug.drugName}</h3>
+                <h3 className="text-xl font-medium">Ndc: {selectedDrug.productNdc}</h3>
                 <div>
                   <p className="font-medium">Active Ingredients:</p>
                   <ul className="list-disc pl-5">
