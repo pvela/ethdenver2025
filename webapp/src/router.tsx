@@ -5,6 +5,7 @@ import Manufacturer from './components/pages/Manufacturer';
 import About from './components/pages/About';
 import Insurance from './components/pages/Insurance';
 import Doctor from './components/pages/Doctor';
+import PBMContractInteraction from './components/pages/PBMContractInteraction';
 
 export const router = createBrowserRouter([
   {
@@ -22,6 +23,10 @@ export const router = createBrowserRouter([
       {
         path: '/about',
         element: <About />,
+      },
+      {
+        path: '/contract',
+        element: <PBMContractInteraction />,
       },
     ],
   },

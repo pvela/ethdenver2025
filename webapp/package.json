@@ -22,6 +22,7 @@
     "@types/node": "^22.13.5",
     "@wagmi/core": "^2.16.5",
     "axios": "^1.7.9",
+    "ethers": "^6.13.5",
     "lodash": "^4.17.21",
     "lucide-react": "^0.476.0",
     "next": "^15.1.7",
@@ -30,6 +31,7 @@
     "react-router-dom": "^7.2.0",
     "viem": "^2.23.5",
     "wagmi": "^2.14.12",
+    "zksync-ethers": "^6.16.1",
     "zksync-sso": "^0.0.0-beta.10"
   },
   "devDependencies": {
