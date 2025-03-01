@@ -213,7 +213,7 @@ export default function Insurance() {
                   <p>{manHistData[2].price}</p>
                 </div>
                 <div>
-                  <p className="font-medium">Buying Price:</p>
+                  <p className="font-medium">Discount %</p>
                   {/* <div className="mb-8"> */}
                     <input
                       type="text"
