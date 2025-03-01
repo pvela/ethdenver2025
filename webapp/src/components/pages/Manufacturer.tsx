@@ -340,7 +340,7 @@ const handleSetPrice = async (drug: Drug) => {
                     )} */}
 
                   </div>
-                  {/* <div className="max-w-4xl mx-auto">
+                  <div className="max-w-4xl mx-auto">
                     <button
                       onClick={() => setShowGrid(!showGrid)}
                       className="mb-6 bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors duration-200"
@@ -349,7 +349,7 @@ const handleSetPrice = async (drug: Drug) => {
                     </button>
 
                     {showGrid && <Grid items={manHistData} />}
-                  </div> */}
+                  </div>
 
                   {/* <p>${selectedDrug.pricing.price.toFixed(2)}</p>
                   <p className="text-sm text-gray-600">
@@ -382,7 +382,7 @@ const handleSetPrice = async (drug: Drug) => {
                   //   // setSelectedDrugList(oldArray => [...oldArray,selectedDrug] );
                   // }}
                 >
-                  Set Price
+                  Submit
                 </button>
                 {/* {selectedDrug && (
                   <DrugRegistration drug={selectedDrug} />

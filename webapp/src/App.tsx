@@ -25,9 +25,9 @@ function AppContent() {
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             MedCrypt
           </Typography>
-          <Button color="inherit" component={RouterLink} to="/drugs">
+          {/* <Button color="inherit" component={RouterLink} to="/drugs">
             Drug List
-          </Button>
+          </Button> */}
           <Button color="inherit" component={RouterLink} to="/manufacturer">
             Manufacturer
           </Button>
