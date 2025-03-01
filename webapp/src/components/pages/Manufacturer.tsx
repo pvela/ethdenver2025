@@ -3,6 +3,8 @@ import { Drug } from '../types/Drug';
 import { searchDrugs } from '../services/drugApi';
 import debounce from 'lodash/debounce';
 import Grid from './Grid';
+import { Button } from '@mui/material';
+import { DrugRegistration } from './DrugRegistration';
 
 export default function Manufacturer() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -27,7 +29,6 @@ export default function Manufacturer() {
   }
 
   const [storedData, setStoredData] = useState<StorageData[]>();
-
 
   useEffect(() => {
     localStorage.removeItem('MfrDrugData');
@@ -269,6 +270,9 @@ export default function Manufacturer() {
                 >
                   Choose Drug
                 </button>
+                {selectedDrug && (
+                  <DrugRegistration drug={selectedDrug} />
+                )}
               </div>
               
             ) : (

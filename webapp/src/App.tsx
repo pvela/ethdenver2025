@@ -4,6 +4,7 @@ import { AppBar, Toolbar, Typography, Button, Container, Box } from '@mui/materi
 import { useAccount, useDisconnect } from 'wagmi';
 import { connectWithSSO } from './components/connectors/SSOConnector';
 import { WagmiProvider } from './components/providers/WagmiProvider';
+import { StoryClient, StoryConfig } from "@story-protocol/core-sdk";
 
 function AppContent() {
   const { address, isConnected } = useAccount();
@@ -24,9 +25,9 @@ function AppContent() {
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             MedCrypt
           </Typography>
-          {/* <Button color="inherit" component={RouterLink} to="/">
+          <Button color="inherit" component={RouterLink} to="/drugs">
             Drug List
-          </Button> */}
+          </Button>
           <Button color="inherit" component={RouterLink} to="/manufacturer">
             Manufacturer
           </Button>
