@@ -94,7 +94,7 @@ const PBMContractInteraction: React.FC = () => {
         if (!contract) return;
         try {
             const price = await contract.availDiscountedPrice(productName);
-            setDiscountedPrice(ethers.utils.formatEther(price));
+            setDiscountedPrice(ethers.formatEther(price));
         } catch (error) {
             console.error("Error checking discounted price:", error);
             alert("Error checking discounted price. Check console for details.");

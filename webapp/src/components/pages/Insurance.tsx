@@ -5,6 +5,11 @@ import debounce from 'lodash/debounce';
 import Grid from './Grid';
 import NativeSelect from '@mui/material/NativeSelect';
 
+import { Provider } from "zksync-ethers";
+import { ethers } from "ethers";
+import PBMFreeContract from '../../../artifacts/PBMFreeContract.json';
+
+
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import Box from '@mui/material/Box';
 import InputLabel from '@mui/material/InputLabel';
@@ -25,6 +30,16 @@ export default function Insurance() {
   const [approvalRequired, setApprovalRequired] = useState(false);
   const [storedData, setStoredData] = useState<StorageData[]>();
   const [mfrDrugData, setMfrDrugData] = useState<Drug>();
+
+        const [contract, setContract] = useState<ethers.Contract | null>(null);
+        const [account, setAccount] = useState<string>('');
+        const [productName, setProductName] = useState<string>('');
+        const [productPrice, setProductPrice] = useState<string>('');
+        const [discountPercentage, setDiscountPercentage] = useState<string>('');
+        const [discountedPrice, setDiscountedPrice] = useState<string>('');
+        const [role, setRole] = useState<string>('');
+    
+  
 
   interface PriceEntry {
     price: number;
@@ -49,11 +64,78 @@ export default function Insurance() {
     // alert('Use effect mfr DD ... ' +  JSON.stringify(mfrDrugData));
   }, []);
 
+  useEffect(() => {
+    const init = async () => {
+        if ((window as any).ethereum) {
+            try {
+                const accounts: string[] = await (window as any).ethereum.request({ method: 'eth_requestAccounts' });
+                setAccount(accounts[0]);
+
+                // Update provider to use zkSync Era testnet
+                const zkSyncProvider = new Provider('https://testnet.era.zksync.dev');
+                
+                // Create Web3Provider from window.ethereum
+                const ethereumProvider = new ethers.BrowserProvider((window as any).ethereum);
+                const signer = await ethereumProvider.getSigner();
+                
+                // Replace with your deployed contract address on zkSync testnet
+                const contractAddress = "0x02A2D65AcF781e2110990426f3D11bDDe99a2b3A";
+                const pbmContract = new ethers.Contract(
+                    contractAddress,
+                    PBMFreeContract.abi,
+                    signer
+                );
+
+                setContract(pbmContract);
+
+                // Determine role
+                const manufacturer = await pbmContract.manufacturer();
+                const insuranceCompany = await pbmContract.insuranceCompany();
+                
+                if (accounts[0].toLowerCase() === manufacturer.toLowerCase()) {
+                    setRole('manufacturer');
+                } else if (accounts[0].toLowerCase() === insuranceCompany.toLowerCase()) {
+                    setRole('insurance');
+                } else {
+                    setRole('pharmacy');
+                }
+
+            } catch (error) {
+                console.error("Error initializing contract:", error);
+            }
+        }
+    };
+
+    init();
+}, []);
+
+
+const handleApproveDiscount = async () => {
+    setProductName("1231232")
+
+    if (!contract) return;
+    try {
+        const tx = await contract.approveDiscount(
+            productName, 
+            discountPercentage,
+            { customData: { gasPerPubdata: 50000 } } // zkSync specific
+        );
+        await tx.wait();
+        alert("Discount approved successfully!");
+    } catch (error) {
+        console.error("Error approving discount:", error);
+        alert("Error approving discount. Check console for details.");
+    }
+};
+
+
+
   const [showGrid, setShowGrid] = useState(false);
 
   const handleNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value
     setSellingPrice(value)
+    setDiscountPercentage(value)
     
     if (value === '') {
       setError('')
@@ -254,28 +336,30 @@ export default function Insurance() {
                   </div>
                 <button
                   className="w-full bg-blue-700 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors"
-                  onClick={() => {
-                    // Handle drug selection
-                    // alert(`Selected drug: ${selectedDrug.drugName}`);
-                    let drug = selectedDrug;
-                    if ( sellingPrice != '' && ! isNaN(Number(sellingPrice)) ) {
-                      drug.pricing.price = Number(sellingPrice);
-                      drug.pricing.lastUpdated = new Date().toLocaleDateString();
-                      setApprovalRequired(true);
-                      // alert(JSON.stringify(drug));
-                      // localStorage.setItem('MfrDrugData', JSON.stringify(drug));
-                      } else {
-                      drug.pricing.price = manHistData[2].price;
-                      drug.pricing.lastUpdated = manHistData[2].date;
-                      setApprovalRequired(false);
-                    }
-                    // localStorage.setItem('MfrDrugData', JSON.stringify(drug));
-                    setSelectedDrug(drug)
-                    setPickedDrug(drug);
-                    // setSelectedDrugList(oldArray => [...oldArray,selectedDrug] );
-                  }}
+                  onClick={handleApproveDiscount}
+
+                //   onClick={() => {
+                //     // Handle drug selection
+                //     // alert(`Selected drug: ${selectedDrug.drugName}`);
+                //     let drug = selectedDrug;
+                //     if ( sellingPrice != '' && ! isNaN(Number(sellingPrice)) ) {
+                //       drug.pricing.price = Number(sellingPrice);
+                //       drug.pricing.lastUpdated = new Date().toLocaleDateString();
+                //       setApprovalRequired(true);
+                //       // alert(JSON.stringify(drug));
+                //       // localStorage.setItem('MfrDrugData', JSON.stringify(drug));
+                //       } else {
+                //       drug.pricing.price = manHistData[2].price;
+                //       drug.pricing.lastUpdated = manHistData[2].date;
+                //       setApprovalRequired(false);
+                //     }
+                //     // localStorage.setItem('MfrDrugData', JSON.stringify(drug));
+                //     setSelectedDrug(drug)
+                //     setPickedDrug(drug);
+                //     // setSelectedDrugList(oldArray => [...oldArray,selectedDrug] );
+                //   }}
                 >
-                  Choose Drug
+                  Approve Discount
                 </button>
               </div>
               

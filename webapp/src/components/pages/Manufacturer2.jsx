@@ -4,7 +4,7 @@ import { ethers } from "ethers";
 
 import PBMFreeContract from '../../../artifacts/PBMFreeContract.json';
 
-const PBMContractInteraction = () => {
+const Manufacturer = () => {
     const [contract, setContract] = useState(null);
     const [account, setAccount] = useState('');
     const [productName, setProductName] = useState('');
@@ -12,6 +12,44 @@ const PBMContractInteraction = () => {
     const [discountPercentage, setDiscountPercentage] = useState('');
     const [discountedPrice, setDiscountedPrice] = useState('');
     const [role, setRole] = useState('');
+
+      const [searchQuery, setSearchQuery] = useState('');
+      const [sellingPrice, setSellingPrice] = useState('');
+      const [drugs, setDrugs] = useState([]);
+      const [loading, setLoading] = useState(false);
+      const [selectedDrug, setSelectedDrug] = useState<Drug | null>(null);
+      // const [selectedDrugList, setSelectedDrugList] = useState<Drug[]>([]);
+      const [pickedDrug, setPickedDrug] = useState<Drug | null>(null);
+      const [error, setError] = useState('')
+    //   const [manHistData, setManHistData] = useState<PriceEntry[]>([]);
+    const [manHistData, setManHistData] = useState([]);
+      const [approvalRequired, setApprovalRequired] = useState(false);
+
+      class PriceEntry {
+        /**
+         * @param {number} price
+         * @param {string} date
+         */
+        constructor(price, date) {
+          this.price = price;
+          this.date = date;
+        }
+      }
+ 
+      class StorageData {
+        constructor(drugName, history) {
+          this.drugName = drugName;
+          this.history = history;
+        }
+      }
+
+        // interface StorageData {
+        //   drugName: string;
+        //   history: PriceEntry[];
+        // }
+      
+        const [storedData, setStoredData] = useState<StorageData[]>();
+      
 
     useEffect(() => {
         const init = async () => {
