@@ -282,8 +282,11 @@ const handleSetPrice = async (drug: Drug) => {
 
           <div className="bg-white rounded-lg shadow p-6">
             <h2 className="text-xl font-semibold mb-4">Drug Details</h2>
+            {selectedDrug && (
+                  <DrugRegistration drug={selectedDrug} />
+                )}
             {selectedDrug ? (
-              <div className="space-y-4">
+              <div className="mt-5 space-y-4">
                 <h3 className="text-xl font-medium">{selectedDrug.drugName}</h3>
                 <h3 className="text-xl font-medium">Ndc: {selectedDrug.productNdc}</h3>
                 <div>
@@ -337,7 +340,7 @@ const handleSetPrice = async (drug: Drug) => {
                     )} */}
 
                   </div>
-                  <div className="max-w-4xl mx-auto">
+                  {/* <div className="max-w-4xl mx-auto">
                     <button
                       onClick={() => setShowGrid(!showGrid)}
                       className="mb-6 bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors duration-200"
@@ -346,7 +349,7 @@ const handleSetPrice = async (drug: Drug) => {
                     </button>
 
                     {showGrid && <Grid items={manHistData} />}
-                  </div>
+                  </div> */}
 
                   {/* <p>${selectedDrug.pricing.price.toFixed(2)}</p>
                   <p className="text-sm text-gray-600">
@@ -381,9 +384,9 @@ const handleSetPrice = async (drug: Drug) => {
                 >
                   Set Price
                 </button>
-                {selectedDrug && (
+                {/* {selectedDrug && (
                   <DrugRegistration drug={selectedDrug} />
-                )}
+                )} */}
               </div>
               
             ) : (

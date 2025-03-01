@@ -344,7 +344,7 @@ const handleApproveDiscount = async (drug: Drug) => {
 
                   </span>
                 </div>
-                <div className="max-w-4xl mx-auto">
+                {/* <div className="max-w-4xl mx-auto">
                     <button
                       onClick={() => setShowGrid(!showGrid)}
                       className="mb-6 bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors duration-200"
@@ -353,7 +353,7 @@ const handleApproveDiscount = async (drug: Drug) => {
                     </button>
 
                     {showGrid && <Grid items={manHistData} />}
-                  </div>
+                  </div> */}
                 <button
                   className="w-full bg-blue-700 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors"
                   onClick={() => handleApproveDiscount(selectedDrug)}
