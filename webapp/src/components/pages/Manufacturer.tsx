@@ -3,6 +3,9 @@ import { Drug } from '../types/Drug';
 import { searchDrugs } from '../services/drugApi';
 import debounce from 'lodash/debounce';
 import Grid from './Grid';
+import { Provider } from "zksync-ethers";
+import { ethers } from "ethers";
+import PBMFreeContract from '../../../artifacts/PBMFreeContract.json';
 import { Button } from '@mui/material';
 import { DrugRegistration } from './DrugRegistration';
 
@@ -17,6 +20,15 @@ export default function Manufacturer() {
   const [error, setError] = useState('')
   const [manHistData, setManHistData] = useState<PriceEntry[]>([]);
   const [approvalRequired, setApprovalRequired] = useState(false);
+
+      const [contract, setContract] = useState<ethers.Contract | null>(null);
+      const [account, setAccount] = useState<string>('');
+      const [productName, setProductName] = useState<string>('');
+      const [productPrice, setProductPrice] = useState<string>('');
+      const [discountPercentage, setDiscountPercentage] = useState<string>('');
+      const [discountedPrice, setDiscountedPrice] = useState<string>('');
+      const [role, setRole] = useState<string>('');
+  
 
   interface PriceEntry {
     price: number;
@@ -39,6 +51,91 @@ export default function Manufacturer() {
     }
   }, []);
 
+  useEffect(() => {
+    const init = async () => {
+        if ((window as any).ethereum) {
+            try {
+                const accounts: string[] = await (window as any).ethereum.request({ method: 'eth_requestAccounts' });
+                setAccount(accounts[0]);
+
+                // Update provider to use zkSync Era testnet
+                const zkSyncProvider = new Provider('https://testnet.era.zksync.dev');
+                
+                // Create Web3Provider from window.ethereum
+                const ethereumProvider = new ethers.BrowserProvider((window as any).ethereum);
+                const signer = await ethereumProvider.getSigner();
+                
+                // Replace with your deployed contract address on zkSync testnet
+                const contractAddress = "0x277c471Ba187082C9836F92c5D2fA37824Fc0749";
+                const pbmContract = new ethers.Contract(
+                    contractAddress,
+                    PBMFreeContract.abi,
+                    signer
+                );
+
+                setContract(pbmContract);
+
+                // Determine role
+                const manufacturer = await pbmContract.manufacturer();
+                const insuranceCompany = await pbmContract.insuranceCompany();
+                
+                if (accounts[0].toLowerCase() === manufacturer.toLowerCase()) {
+                    setRole('manufacturer');
+                } else if (accounts[0].toLowerCase() === insuranceCompany.toLowerCase()) {
+                    setRole('insurance');
+                } else {
+                    setRole('pharmacy');
+                }
+
+            } catch (error) {
+                console.error("Error initializing contract:", error);
+            }
+        }
+    };
+
+    init();
+}, []);
+
+const handleSetPrice = async (drug: Drug) => {
+  console.log(drug.productNdc);
+  setProductName(drug.productNdc)
+  // setProductPrice("125000")
+
+                      // Handle drug selection
+                    // alert(`Selected drug: ${selectedDrug.drugName}`);
+                    //let drug = drugs[2];
+                    if ( sellingPrice != '' && !isNaN(Number(sellingPrice)) ) {
+                      drug.pricing.price = Number(sellingPrice);
+                      drug.pricing.lastUpdated = new Date().toLocaleDateString();
+                      setApprovalRequired(true);
+                      // alert(JSON.stringify(drug));
+                      // localStorage.setItem('MfrDrugData', JSON.stringify(drug));
+                      } else {
+                      drug.pricing.price = manHistData[2]?.price;
+                      drug.pricing.lastUpdated = manHistData[2].date;
+                      setApprovalRequired(false);
+                    }
+                    localStorage.setItem('MfrDrugData', JSON.stringify(drug));
+                    setSelectedDrug(drug)
+                    setPickedDrug(drug);
+                    
+                    // setSelectedDrugList(oldArray => [...oldArray,selectedDrug] );
+
+    if (!contract) return;
+    try {
+        const tx = await contract.setProductPrice(
+          drug.productNdc, 
+            ethers.parseEther(productPrice),
+            { customData: { gasPerPubdata: 50000 } } // zkSync specific
+        );
+        await tx.wait();
+        alert("Price set successfully!");
+    } catch (error) {
+        console.error("Error setting price:", error);
+        alert("Error setting price. Check console for details.");
+    }
+};
+
 
 
   const [showGrid, setShowGrid] = useState(false);
@@ -53,6 +150,7 @@ export default function Manufacturer() {
   const handleNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value
     setSellingPrice(value)
+    setProductPrice(value)
     
     if (value === '') {
       setError('')
@@ -99,6 +197,7 @@ export default function Manufacturer() {
 
   const handleDrugSelect = (drug: Drug) => {
     setShowGrid(false);
+    setSelectedDrug(drug);
     if ( storedData && storedData.length > 0 ) {
       const histData = storedData.filter( ( hist ) =>  {
        return hist.drugName === drug.drugName
@@ -113,7 +212,7 @@ export default function Manufacturer() {
 
     }
   
-    setSelectedDrug(drug);
+    
   };
 
   return (
@@ -186,6 +285,7 @@ export default function Manufacturer() {
             {selectedDrug ? (
               <div className="space-y-4">
                 <h3 className="text-xl font-medium">{selectedDrug.drugName}</h3>
+                <h3 className="text-xl font-medium">Ndc: {selectedDrug.productNdc}</h3>
                 <div>
                   <p className="font-medium">Active Ingredients:</p>
                   <ul className="list-disc pl-5">
@@ -212,12 +312,20 @@ export default function Manufacturer() {
                 </div>
                 <div>
                   <p className="font-medium">Current Price:</p>
-                  <p>{manHistData[2].price}</p>
+                  <p>{manHistData[2]?.price}</p>
                 </div>
                 <div>
                   <p className="font-medium">Selling Price:</p>
                   <div className="mb-8">
-                    <input
+                  <input
+                        type="text"
+                        placeholder="Product Price (ETH)"
+                        value={productPrice}
+                        onChange={handleNumberChange}
+                        className="w-20 px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        />
+
+                    {/* <input
                       type="text"
                       placeholder="Price..."
                       value={sellingPrice}
@@ -226,7 +334,7 @@ export default function Manufacturer() {
                     />
                     {error && (
                       <p className="text-red-500 text-sm">{error}</p>
-                    )}
+                    )} */}
 
                   </div>
                   <div className="max-w-4xl mx-auto">
@@ -247,28 +355,31 @@ export default function Manufacturer() {
                 </div>
                 <button
                   className="w-full bg-blue-700 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors"
-                  onClick={() => {
-                    // Handle drug selection
-                    // alert(`Selected drug: ${selectedDrug.drugName}`);
-                    let drug = selectedDrug;
-                    if ( sellingPrice != '' && !isNaN(Number(sellingPrice)) ) {
-                      drug.pricing.price = Number(sellingPrice);
-                      drug.pricing.lastUpdated = new Date().toLocaleDateString();
-                      setApprovalRequired(true);
-                      // alert(JSON.stringify(drug));
-                      // localStorage.setItem('MfrDrugData', JSON.stringify(drug));
-                      } else {
-                      drug.pricing.price = manHistData[2].price;
-                      drug.pricing.lastUpdated = manHistData[2].date;
-                      setApprovalRequired(false);
-                    }
-                    localStorage.setItem('MfrDrugData', JSON.stringify(drug));
-                    setSelectedDrug(drug)
-                    setPickedDrug(drug);
-                    // setSelectedDrugList(oldArray => [...oldArray,selectedDrug] );
-                  }}
+                  onClick={() => handleSetPrice(selectedDrug)}
+                  // onClick={() => {
+                    
+                  //   // Handle drug selection
+                  //   // alert(`Selected drug: ${selectedDrug.drugName}`);
+                  //   let drug = selectedDrug;
+                  //   if ( sellingPrice != '' && !isNaN(Number(sellingPrice)) ) {
+                  //     drug.pricing.price = Number(sellingPrice);
+                  //     drug.pricing.lastUpdated = new Date().toLocaleDateString();
+                  //     setApprovalRequired(true);
+                  //     // alert(JSON.stringify(drug));
+                  //     // localStorage.setItem('MfrDrugData', JSON.stringify(drug));
+                  //     } else {
+                  //     drug.pricing.price = manHistData[2].price;
+                  //     drug.pricing.lastUpdated = manHistData[2].date;
+                  //     setApprovalRequired(false);
+                  //   }
+                  //   localStorage.setItem('MfrDrugData', JSON.stringify(drug));
+                  //   setSelectedDrug(drug)
+                  //   setPickedDrug(drug);
+                    
+                  //   // setSelectedDrugList(oldArray => [...oldArray,selectedDrug] );
+                  // }}
                 >
-                  Choose Drug
+                  Set Price
                 </button>
                 {selectedDrug && (
                   <DrugRegistration drug={selectedDrug} />

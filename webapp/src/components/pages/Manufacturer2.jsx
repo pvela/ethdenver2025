@@ -4,31 +4,69 @@ import { ethers } from "ethers";
 
 import PBMFreeContract from '../../../artifacts/PBMFreeContract.json';
 
-const PBMContractInteraction: React.FC = () => {
-    const [contract, setContract] = useState<ethers.Contract | null>(null);
-    const [account, setAccount] = useState<string>('');
-    const [productName, setProductName] = useState<string>('');
-    const [productPrice, setProductPrice] = useState<string>('');
-    const [discountPercentage, setDiscountPercentage] = useState<string>('');
-    const [discountedPrice, setDiscountedPrice] = useState<string>('');
-    const [role, setRole] = useState<string>('');
+const Manufacturer = () => {
+    const [contract, setContract] = useState(null);
+    const [account, setAccount] = useState('');
+    const [productName, setProductName] = useState('');
+    const [productPrice, setProductPrice] = useState('');
+    const [discountPercentage, setDiscountPercentage] = useState('');
+    const [discountedPrice, setDiscountedPrice] = useState('');
+    const [role, setRole] = useState('');
+
+      const [searchQuery, setSearchQuery] = useState('');
+      const [sellingPrice, setSellingPrice] = useState('');
+      const [drugs, setDrugs] = useState([]);
+      const [loading, setLoading] = useState(false);
+      const [selectedDrug, setSelectedDrug] = useState<Drug | null>(null);
+      // const [selectedDrugList, setSelectedDrugList] = useState<Drug[]>([]);
+      const [pickedDrug, setPickedDrug] = useState<Drug | null>(null);
+      const [error, setError] = useState('')
+    //   const [manHistData, setManHistData] = useState<PriceEntry[]>([]);
+    const [manHistData, setManHistData] = useState([]);
+      const [approvalRequired, setApprovalRequired] = useState(false);
+
+      class PriceEntry {
+        /**
+         * @param {number} price
+         * @param {string} date
+         */
+        constructor(price, date) {
+          this.price = price;
+          this.date = date;
+        }
+      }
+ 
+      class StorageData {
+        constructor(drugName, history) {
+          this.drugName = drugName;
+          this.history = history;
+        }
+      }
+
+        // interface StorageData {
+        //   drugName: string;
+        //   history: PriceEntry[];
+        // }
+      
+        const [storedData, setStoredData] = useState<StorageData[]>();
+      
 
     useEffect(() => {
         const init = async () => {
-            if ((window as any).ethereum) {
+            if (window.ethereum) {
                 try {
-                    const accounts: string[] = await (window as any).ethereum.request({ method: 'eth_requestAccounts' });
+                    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
                     setAccount(accounts[0]);
 
                     // Update provider to use zkSync Era testnet
                     const zkSyncProvider = new Provider('https://testnet.era.zksync.dev');
                     
                     // Create Web3Provider from window.ethereum
-                    const ethereumProvider = new ethers.BrowserProvider((window as any).ethereum);
+                    const ethereumProvider = new ethers.BrowserProvider(window.ethereum);
                     const signer = await ethereumProvider.getSigner();
                     
                     // Replace with your deployed contract address on zkSync testnet
-                    const contractAddress = "0x277c471Ba187082C9836F92c5D2fA37824Fc0749";
+                    const contractAddress = "0x02A2D65AcF781e2110990426f3D11bDDe99a2b3A";
                     const pbmContract = new ethers.Contract(
                         contractAddress,
                         PBMFreeContract.abi,
@@ -59,7 +97,6 @@ const PBMContractInteraction: React.FC = () => {
     }, []);
 
     const handleSetPrice = async () => {
-        if (!contract) return;
         try {
             const tx = await contract.setProductPrice(
                 productName, 
@@ -75,7 +112,6 @@ const PBMContractInteraction: React.FC = () => {
     };
 
     const handleApproveDiscount = async () => {
-        if (!contract) return;
         try {
             const tx = await contract.approveDiscount(
                 productName, 
@@ -91,10 +127,9 @@ const PBMContractInteraction: React.FC = () => {
     };
 
     const handleCheckDiscountedPrice = async () => {
-        if (!contract) return;
         try {
             const price = await contract.availDiscountedPrice(productName);
-            setDiscountedPrice(ethers.formatEther(price));
+            setDiscountedPrice(ethers.utils.formatEther(price));
         } catch (error) {
             console.error("Error checking discounted price:", error);
             alert("Error checking discounted price. Check console for details.");
