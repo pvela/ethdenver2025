@@ -22,7 +22,7 @@ function AppContent() {
       <AppBar style={{backgroundColor:'blue', color: 'white'}} position="static">
         <Toolbar>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            Supercool team!!
+            MedCrypt
           </Typography>
           {/* <Button color="inherit" component={RouterLink} to="/">
             Drug List
