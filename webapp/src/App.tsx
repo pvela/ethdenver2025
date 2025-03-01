@@ -36,6 +36,9 @@ function AppContent() {
           <Button color="inherit" component={RouterLink} to="/doctor">
             Doctor
           </Button>
+          <Button color="inherit" component={RouterLink} to="/contract">
+            Contract
+          </Button>
           <Button color="inherit" component={RouterLink} to="/about">
             About
           </Button>
